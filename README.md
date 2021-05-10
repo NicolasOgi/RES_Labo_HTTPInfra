@@ -15,3 +15,15 @@ Tous les fichiers contenus dans le dossier *content* sont copiés dans le conten
 Template bootstrap utilisé pour la page index : https://startbootstrap.com/theme/agency
 
 Les fichiers de configuration d'*Apache* dans le conteneur dans le dossier */etc/apache2* ont été laissés par défaut pour l'instant.
+
+
+
+## Étape 2
+
+Image utilisée comme base dans le Dockerfile : [node:14.16.1](https://hub.docker.com/_/node)
+
+Tous les fichiers contenus dans le dossier *src* sont copiés dans le conteneur lors du build, dans le dossier */opt/app/html*. La commande `node /opt/app/index.js` est lancée dès le démarrage du conteneur.
+
+Le fichier *index.js* va générer une chaîne ("Voici [préfixe] [animal] qui vient de [ville]") aléatoire grâce au module *Chance.js*.
+
+**TODO**
