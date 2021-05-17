@@ -24,6 +24,6 @@ Image utilisée comme base dans le Dockerfile : [node:14.16.1](https://hub.docke
 
 Tous les fichiers contenus dans le dossier *src* sont copiés dans le conteneur lors du build, dans le dossier */opt/app/html*. La commande `node /opt/app/index.js` est lancée dès le démarrage du conteneur.
 
-Le fichier *index.js* va générer une chaîne ("Voici [préfixe] [animal] qui vient de [ville]") aléatoire grâce au module *Chance.js*.
+Le fichier *index.js* gère un serveur http avec express et retourne une liste d'animaux avec leur pays de résidence actuel et leur prix.
 
 **TODO**
