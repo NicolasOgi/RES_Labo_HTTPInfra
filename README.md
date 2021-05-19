@@ -34,7 +34,7 @@ Image utilisées :
 
 - [node:14.16.1](https://hub.docker.com/_/node) Serveur dynamique
 - [php:8.0.6-apache](https://hub.docker.com/_/php) : serveur statique
--  [php:8.0.6-apache](https://hub.docker.com/_/php) : reverse proxy
+- [php:8.0.6-apache](https://hub.docker.com/_/php) : reverse proxy
 
 Setup pour les serveurs est le même que précédemment.
 
@@ -44,3 +44,14 @@ Nous utilisons l'image php et pas une image apache afin de pouvoir directement a
 
 La configuration est fragile car les adresses ip des serveurs sont alloués dynamiquement et peuvent donc changer ce qui implique de modifier les fochiers de configuration et de relancer le proxy.
 
+## Étape 3
+
+Image utilisées : 
+
+- [node:14.16.1](https://hub.docker.com/_/node) Serveur dynamique
+- [php:8.0.6-apache](https://hub.docker.com/_/php) : serveur statique
+- [php:8.0.6-apache](https://hub.docker.com/_/php) : reverse proxy
+
+Meme config que avant.
+Les requetes sont bien envoyés par le navigateur (vérifié avec les devs-tools)
+Le reverse proxy est essentiel à cause de la Same-Origin policy qui oblige à ce que les requetes viennent du même serveur et le cors est desactivé.
