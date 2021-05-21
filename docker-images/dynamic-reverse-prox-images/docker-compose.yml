@@ -5,7 +5,6 @@ services:
     webserver:
         build: .
         container_name: reverse
-        working_dir: /application
         ports:
             - "80:80"
         networks:
@@ -14,13 +13,12 @@ services:
     front-end:
         image: ajax:latest
         container_name: front
-        tty: true
         networks:
             - default
+
     back-end:
         image: dynamic_express:latest
         container_name: back
-        tty: true
         networks:
             - default
 
