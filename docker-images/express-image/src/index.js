@@ -1,8 +1,10 @@
 const express = require('express')
 const Chance = require('chance');
 const app = express()
+const { v4: uuidv4 } = require('uuid');
 
 
+const uid = uuidv4();
 
 function generateAnimalList(){
     const chance = new Chance();
@@ -26,7 +28,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('*', (req, res, next) => {
-    res.status(404).send("No Luck for you. "+req.protocol + '://' + req.get('host') + req.originalUrl+"\n"+req.baseUrl+"\n"+req.headers['X-Forwarded-Prefix']);
+    res.status(404).send(uid);
 });
 
 
