@@ -1,0 +1,26 @@
+version: "3.1"
+
+services:
+
+    webserver:
+        build: .
+        container_name: reverse
+        ports:
+            - "80:80"
+        networks:
+            - default
+
+    front-end:
+        image: ajax:latest
+        container_name: front
+        networks:
+            - default
+
+    back-end:
+        image: dynamic_express:latest
+        container_name: back
+        networks:
+            - default
+
+networks:
+    default:
