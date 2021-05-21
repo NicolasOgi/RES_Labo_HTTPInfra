@@ -44,7 +44,7 @@ Nous utilisons l'image php et pas une image apache afin de pouvoir directement a
 
 La configuration est fragile car les adresses ip des serveurs sont alloués dynamiquement et peuvent donc changer ce qui implique de modifier les fochiers de configuration et de relancer le proxy.
 
-## Étape 3
+## Étape 4
 
 Image utilisées : 
 
@@ -52,6 +52,42 @@ Image utilisées :
 - [php:8.0.6-apache](https://hub.docker.com/_/php) : serveur statique
 - [php:8.0.6-apache](https://hub.docker.com/_/php) : reverse proxy
 
-Meme config que avant.
-Les requetes sont bien envoyés par le navigateur (vérifié avec les devs-tools)
-Le reverse proxy est essentiel à cause de la Same-Origin policy qui oblige à ce que les requetes viennent du même serveur et le cors est desactivé.
+Même config que avant.
+Les requêtes sont bien envoyés par le navigateur (vérifié avec les devs-tools)
+Le reverse proxy est essentiel à cause de la Same-Origin policy qui oblige à ce que les requêtes viennent du même serveur et le cors est désactive.
+
+## Étape 5
+
+Image utilisées : 
+
+- [node:14.16.1](https://hub.docker.com/_/node) Serveur dynamique
+- [php:8.0.6-apache](https://hub.docker.com/_/php) : serveur statique
+- [php:8.0.6-apache](https://hub.docker.com/_/php) : reverse proxy
+
+Les images utilisés sont les mêmes que auparavant mais nous utilisons docker-compose pour simplifier la création des conteneurs et du réseaux. Nous n'avons pas utilisé la solution proposé mais avons utilisé le fait que les réseaux dockers crée par un utilisateur permettent la résolution dynamique des noms de conteneurs [[1]](https://docs.docker.com/network/bridge/#differences-between-user-defined-bridges-and-the-default-bridge).
+Nous n'avons donc pas besoin de nous occuper de récupérer les adresses ip d'un quelconque conteneurs et pouvons lancer tous les conteneurs en une seule commande.
+
+## Bonus
+
+Pour les bonus, nous avons choisi d'implémenter le load-balancing avec [traefik](https://traefik.io/). 
+
+mage utilisées : 
+
+- [node:14.16.1](https://hub.docker.com/_/node) Serveur dynamique
+- [php:8.0.6-apache](https://hub.docker.com/_/php) : serveur statique
+- [php:8.0.6-apache](https://hub.docker.com/_/traefik/) : reverse proxy
+
+Le load-balancer fonctionne en round-robin et concerne il y a 2 clusters de serveurs qui sont gérés, 1 pour la partie statique et l'autre pour la partie dynamique.
+
+Pour vérifier l'implémentation, nous avons modifié l'implémentation du serveur dynamique pour retourner un uid qui est fixé à la création du serveur. En effectuant des requêtes, on peut voir que l'uid change à chaque requete (de façon périodique selon le nombre de serveur crées).
+
+Les clusters sont également dynamique et le nombre de serveur actif peut être modifié à la volée. 
+
+### TODO Commande pour modifier Dynamiquement les clusters
+
+### TODO Test avec script qui garde le nombre de fois ou un sid est recupéré
+
+Pour cela nous avons utilisé les capacités de traefik.
+
+### TODO sticky session
+
