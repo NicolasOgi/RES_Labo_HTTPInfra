@@ -2,7 +2,7 @@ version: "3.1"
 
 services:
 
-    webserver:
+    reverse:
         build: .
         container_name: reverse
         ports:
