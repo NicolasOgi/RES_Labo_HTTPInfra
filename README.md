@@ -27,7 +27,7 @@ car elle dispose déjà d'un serveur Apache configuré pour fournir des pages PH
 Tous les fichiers contenus dans le dossier `content` sont copiés dans le conteneur lors du build, dans le dossier `/var/www/html`.
 Le template bootstrap utilisé pour la page d'accueil peut être trouvé [ici](https://startbootstrap.com/theme/agency).
 
-Les fichiers de configuration d'*Apache* à l'intérieur conteneur situé dans le dossier `/etc/apache2` n'ont pas été modifiés.
+Les fichiers de configuration d'*Apache* à l'intérieur du conteneur, situés dans le dossier `/etc/apache2` n'ont pas été modifiés.
 
 ### Commandes
 Voici les commandes pour construire l'image à partir du Dockerfile et ensuite lancer un conteneur.
@@ -221,13 +221,13 @@ La configuration pour le sticky session est définie avec les labels `traefik`:
 ### Dynamic cluster management
 A l'aide de *Traefik*, nous pouvons ajouter de façon dynamique et simple, des conteneurs dans les clusters. Pour cela, 
 il suffit de préciser le nombre d'instances souhaitées avec `docker-compose` et l'option `--scale`
-**Example**
+**Exemple**
 `docker-compose up -d --scale front=2 --scale back=3` pour définir une configuration composée de 2 serveurs statiques et 3 serveurs dynamiques.
 
 
 ### Management UI
 Avec *Traefik*, il est possible de visualiser facilement le nombre de conteneurs actifs mais pas de modifier la configuration actuelle.
-Example d'une configuration avec 2 serveurs statiques et 2 serveurs dynamiques.
+Exemple d'une configuration avec 2 serveurs statiques et 2 serveurs dynamiques.
 ![schema](images/traefik.png)
 
 Nous avons essayé *Portainer* pour modifier la configuration en temps réel depuis une interface Web. Cela fonctionne mais ce n'est pas très 
