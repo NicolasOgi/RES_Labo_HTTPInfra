@@ -134,7 +134,7 @@ Voici les commandes pour construire l'image à partir du Dockerfile et ensuite l
 
 `docker run --name monsieur_propre -d ajax:latest` Démarre un conteneur portant le nom *monsieur_propre* en arrière-plan.
 
-## Étape 5
+## Étape 5 : Dynamic reverse proxy configuration
 
 ### But
 
