@@ -6,6 +6,5 @@ WORKDIR /opt/app
 ENV PORT=8080
 EXPOSE $PORT
 
-RUN npm install 
+RUN npm install
 CMD ["node", "index.js"]
-
