@@ -12,7 +12,7 @@ ___
 **IMPORTANT**:
 Le fichier host doit être modifié pour rediriger demo.res.ch vers localhost.
 
-## Étape 5
+## Étape 5 : Dynamic reverse proxy configuration
 
 ### But
 
