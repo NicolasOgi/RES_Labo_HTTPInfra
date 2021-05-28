@@ -1,7 +1,10 @@
 FROM node:14.16.1
 
 COPY src /opt/app
+WORKDIR /opt/app
 
-RUN npm install /opt/app/
-CMD ["node", "/opt/app/index.js"]
+ENV PORT=8080
+EXPOSE $PORT
 
+RUN npm install
+CMD ["node", "index.js"]
