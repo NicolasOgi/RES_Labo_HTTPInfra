@@ -170,6 +170,27 @@ ci-dessous.
 - [php:8.0.6-apache](https://hub.docker.com/_/php) : Serveur statique (Défini à l'étape 4)
 - [php:8.0.6-apache](https://hub.docker.com/_/traefik/) : Reverse proxy. Nous utilisons *Traefik* 
   pour implémenter le load-balancing, les sticky-sessions et l'ajout dynamique de conteneur dans les clusters. 
+  
+
+### Reverse Proxy
+La configuration du reverse proxy est définie à l'aide de labels dans le fichier `docker-compose.yaml`.
+Le reverse proxy expose le port 80 pour le trafic destiné aux serveurs dont il est en charge.
+
+Les routes sont définies avec les labels traefik.http.routers.CLUSTER.rule=RULE où CLUSTER est le cluster vers lequel 
+rediriger le trafic et RULE la règle que doit respecter la requête pour être redirigés
+**Exemple**
+- Host(`demo.res.ch`) && PathPrefix(`/api/animals/`), pour le back end, où la route doit commencer par `api/animals/` pour que la requête soit redirigée.
+- Host(`demo.res.ch`), pour le front end, où toutes les requêtes pour `demo.res.ch` qui ne respectent pas la règle précédente seront redirigées vers le front end.
+
+Les requêtes vers le back end doivent également être modifiées car le serveur attend que la requête se fasse sur la racine et l'URL doit être modifiée pour y retirer le préfixe.
+```
+- traefik.http.routers.back.middlewares=back-stripprefix
+- traefik.http.middlewares.back-stripprefix.stripprefix.prefixes=/api/animals/,/api,/api/,/api/animals
+- traefik.http.middlewares.back-stripprefix.stripprefix.forceslash=false
+```
+Avec les commandes ci-dessus, on enregistre un middleware pour modifier l'URL et enlever le `/api/animals` avant de transmettre la requête au serveur.
+
+Le reverse proxy expose également une interface de monitoring sur le port 8080, qui permet de visualiser les conteneurs en activité.
 
 
 ### Load balancing: multiple server nodes
@@ -180,6 +201,9 @@ Pour vérifier son fonctionnement, nous avons modifié l'implémentation du serv
 fixé à la création du serveur. En effectuant des requêtes, on peut voir que l'uid change à chaque requête (de façon
 périodique selon le nombre de serveurs créés).
 
+La configuration pour le load balancing est définie avec les labels `traefik`:
+- traefik.http.services.CLUSTER.loadbalancer.server.port=PORT où CLUSTER est le cluster concerné (front end ou back end) et PORT est le port que les conteneurs exposent.
+
 ### Load balancing: round-robin vs sticky sessions
 Le load balancer fonctionne en round-robin comme démontré précédemment en assurant que les requêtes du client sont envoyées à un serveur différent à chaque fois.
 Les sticky sessions permettent de s'adresser au même serveur pour toute une session (si le site comporte une partie authentifiée par exemple). 
@@ -189,6 +213,10 @@ Si le client précise ce cookie dans sa requête suivante, il continuera à éch
 Exemple de réponse du serveur avec `Set-Cookie`:
 
 ![schema](images/Set-cookie.png)
+
+La configuration pour le sticky session est définie avec les labels `traefik`:
+- traefik.http.services.front.loadBalancer.sticky.cookie=true, pour activer le sticky session
+- traefik.http.services.front.loadBalancer.sticky.cookie.name=front_cookie_name, pour définir le nom du cookie
 
 ### Dynamic cluster management
 A l'aide de *Traefik*, nous pouvons ajouter de façon dynamique et simple, des conteneurs dans les clusters. Pour cela, 
