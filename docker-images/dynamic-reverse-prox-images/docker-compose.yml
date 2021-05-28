@@ -8,19 +8,19 @@ services:
         ports:
             - "80:80"
         networks:
-            - default
+            - res
 
     front-end:
         image: ajax:latest
         container_name: front
         networks:
-            - default
+            - res
 
     back-end:
         image: dynamic_express:latest
         container_name: back
         networks:
-            - default
+            - res
 
 networks:
-    default:
+    res:
