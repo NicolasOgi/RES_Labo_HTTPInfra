@@ -9,6 +9,9 @@ Date : 27.05.2021
 
 ___
 
+**IMPORTANT**: 
+Le fichier host doit être modifié pour rediriger demo.res.ch vers localhost.
+
 ## Étape 1 : Static HTTP server with apache httpd
 
 ### But
@@ -95,7 +98,7 @@ implique de modifier les fichiers de configuration et de relancer le reverse pro
 
 Le seul conteneur accessible est le `reverse_apache_static` car il est le seul avec des ports mappés vers l'extérieur.
 
-### Command
+### Commandes
 Voici les commandes pour construire l'image à partir du Dockerfile et ensuite lancer un conteneur.
 
 `docker build -t reverse_apache .` Construit une image nommée *reverse_apache*.
@@ -158,29 +161,46 @@ ci-dessous.
 
 ## Étapes additionnelles
 
-Pour les étapes bonus, nous avons choisi d'implémenter le load-balancing avec [traefik](https://traefik.io/).
+### Schéma d'infrastructure
+![schema](images/infrastructure_schema.png)
 
 ### Image utilisées :
 
-- [node:14.16.1](https://hub.docker.com/_/node) Serveur dynamique
-- [php:8.0.6-apache](https://hub.docker.com/_/php) : serveur statique
-- [php:8.0.6-apache](https://hub.docker.com/_/traefik/) : reverse proxy
+- [node:14.16.1](https://hub.docker.com/_/node) Serveur dynamique (Défini à l'étape 2 mais modifié pour retourner un uid sur une des routes)
+- [php:8.0.6-apache](https://hub.docker.com/_/php) : Serveur statique (Défini à l'étape 4)
+- [php:8.0.6-apache](https://hub.docker.com/_/traefik/) : Reverse proxy. Nous utilisons *Traefik* 
+  pour implémenter le load-balancing, les sticky-sessions et l'ajout dynamique de conteneur dans les clusters. 
 
-Le load-balancer fonctionne en round-robin et concerne il y a 2 clusters de serveurs qui sont gérés, 1 pour la partie
+
+### Load balancing: multiple server nodes
+Le load-balancer fonctionne en round-robin. Il y a 2 clusters de serveurs qui sont gérés, un pour la partie
 statique et l'autre pour la partie dynamique.
 
 Pour vérifier l'implémentation, nous avons modifié l'implémentation du serveur dynamique pour retourner un uid qui est
 fixé à la création du serveur. En effectuant des requêtes, on peut voir que l'uid change à chaque requête (de façon
-périodique selon le nombre de serveur crées).
+périodique selon le nombre de serveurs créés).
 
-Les clusters sont également dynamiques et le nombre de serveur actif peut être modifié à la volée avec cette commande :
-`docker-compose up -d --scale back=2` pour ajouter un nouveau serveur dynamique de backend.
+### Load balancing: round-robin vs sticky sessions
+Le load balancer fonctionne en round-robin comme démontré précédemment en assurant que les requêtes du client sont envoyées à un serveur différent à chaque fois.
+Les sticky sessions permettent de s'adresser au même serveur pour toute une session (si le site comporte une partie authentifiée par exemple). 
+On peut voir que la réponse de la première requête adressée au serveur statique contient un header Set-Cookies avec l'IP du serveur et le path. 
+Si le client précise ce cookie dans sa requête suivante, il continuera à échanger avec le même serveur. 
 
-### TODO Commande pour modifier Dynamiquement les clusters
+Exemple de réponse du serveur avec `Set-Cookie`:
 
-### TODO Test avec script qui garde le nombre de fois ou un sid est recupéré
+![schema](images/Set-cookie.png)
 
-Pour cela nous avons utilisé les capacités de traefik.
+### Dynamic cluster management
+A l'aide de *Traefik*, nous pouvons ajouter de façon dynamique et simple, des conteneurs dans les clusters. Pour cela, 
+il suffit de préciser le nombre d'instances souhaitées avec `docker-compose` et l'option `--scale`
+**Example**
+`docker-compose up -d --scale front=2 --scale back=3` pour définir une configuration composée de 2 serveurs statiques et 3 serveurs dynamiques.
 
-### TODO sticky session
 
+### Management UI
+Avec *Traefik*, il est possible de visualiser facilement le nombre de conteneurs actifs mais pas de modifier la configuration actuelle.
+Example d'une configuration avec 2 serveurs statiques et 2 serveurs dynamiques.
+![schema](images/traefik.png)
+
+Nous avons essayé *Portainer* pour modifier la configuration en temps réel depuis une interface Web. Cela fonctionne mais ce n'est pas très 
+ergonomique ni intuitif et avons décidé de ne pas accorder plus de temps à cette partie.

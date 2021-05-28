@@ -27,8 +27,12 @@ app.get('/', (req, res) => {
     res.send(generateAnimalList())
 })
 
+app.get('/uid', (req, res) => {
+    res.status(200).send(uid);
+})
+
 app.use('*', (req, res, next) => {
-    res.status(404).send(uid);
+    res.status(404).send("No route defined");
 });
 
 

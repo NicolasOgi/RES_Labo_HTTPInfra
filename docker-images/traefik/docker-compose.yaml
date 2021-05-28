@@ -16,7 +16,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
   back:
     # A container that exposes an API to show its IP address
-    image: dynamic_express:latest
+    image: express_demo:latest
     labels:
       - "traefik.http.routers.back.rule=Host(`demo.res.ch`) && PathPrefix(`/api/animals/`)"
       - "traefik.http.routers.back.middlewares=back-stripprefix"
