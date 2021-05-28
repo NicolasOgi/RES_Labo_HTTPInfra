@@ -29,7 +29,7 @@ Le template bootstrap utilisé pour la page d'accueil peut être trouvé [ici](h
 
 Les fichiers de configuration d'*Apache* à l'intérieur conteneur situé dans le dossier `/etc/apache2` n'ont pas été modifiés.
 
-### Command
+### Commandes
 Voici les commandes pour construire l'image à partir du Dockerfile et ensuite lancer un conteneur.
 
 `docker build -t php_apache .` Construit une image nommée *php_apache*.
@@ -62,7 +62,7 @@ actuel et leur prix, en JSON. Le module *chance* a été utilisé afin de géné
 Il est possible de préciser le port qu'utilisera le serveur dans le Dockerfile (Variable d'environnement `PORT`). 
 La configuration du serveur *Express* est celle par défaut.
 
-### Command
+### Commandes
 Voici les commandes pour construire l'image à partir du Dockerfile et ensuite lancer un conteneur.
 
 `docker build -t dynamic_express .` Construit une image nommée *dynamic_express*.
@@ -127,7 +127,7 @@ serveur.
 Les requêtes vers le serveur dynamique sont gérées par un script JQuery situé dans `content/js/animals.js`. 
 Une nouvelle requête est effectuée toutes les 2 secondes.
 
-### Command
+### Commandes
 Voici les commandes pour construire l'image à partir du Dockerfile et ensuite lancer un conteneur.
 
 `docker build -t ajax .` Construit une image nommée *ajax*.
@@ -153,7 +153,7 @@ conteneurs [[1]](https://docs.docker.com/network/bridge/#differences-between-use
 . Nous n'avons donc pas besoin de nous occuper de récupérer les adresses IP d'un quelconque conteneur et pouvons lancer
 tous les conteneurs en une seule commande.
 
-### Command
+### Commandes
 Toutes les images des étapes précédentes doivent être construites avec la commande `docker build` avant de lancer la commande
 ci-dessous.
 
@@ -164,7 +164,7 @@ ci-dessous.
 ### Schéma d'infrastructure
 ![schema](images/infrastructure_schema.png)
 
-### Image utilisées :
+### Images utilisées :
 
 - [node:14.16.1](https://hub.docker.com/_/node) Serveur dynamique (Défini à l'étape 2 mais modifié pour retourner un uid sur une des routes)
 - [php:8.0.6-apache](https://hub.docker.com/_/php) : Serveur statique (Défini à l'étape 4)
@@ -176,7 +176,7 @@ ci-dessous.
 Le load-balancer fonctionne en round-robin. Il y a 2 clusters de serveurs qui sont gérés, un pour la partie
 statique et l'autre pour la partie dynamique.
 
-Pour vérifier l'implémentation, nous avons modifié l'implémentation du serveur dynamique pour retourner un uid qui est
+Pour vérifier son fonctionnement, nous avons modifié l'implémentation du serveur dynamique pour retourner un uid qui est
 fixé à la création du serveur. En effectuant des requêtes, on peut voir que l'uid change à chaque requête (de façon
 périodique selon le nombre de serveurs créés).
 
